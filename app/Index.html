@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
+<title>Talquee Bank - Cadastro</title>
+
+</head>
+<body>
+    <h1 class="text-color">Cadastro</h1>
+    <div class="container">
+        <ul class="steps">
+            <li class="active">Dados Básicos</li>
+            <li class="">Dados de Endereço</li>
+            <li class="">Dados Financeiros</li>
+            <li class="">Senha</li>
+        </ul>
+        <form id="basicDataForm">
+            <label class="text-color" for="name">Nome:</label>
+            <input type="text" id="name" name="name" placeholder="Digite seu nome completo" required><br>
+            
+            <label class="text-color" for="birthdate">Data de Nascimento:</label>
+            <input type="date" id="birthdate" name="birthdate" required><br><br>
+
+            <label class="text-color" for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" maxlength="11" placeholder="000.000.000-00" required>
+            <div id="cpfWarning" class="warning-custom">CPF inválido.</div><br>
+            
+            <label class="text-color" for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="exemplo@exemplo.com" required><br><br>
+            
+            <label class="text-color" for="phone">Telefone:</label>
+            <input type="number" id="phone" name="phone" placeholder="(11) 99999-9999" required
+                oninput="if(value.length>11)value=value.slice(0,11)">
+            <div id="phoneWarning" class="warning-custom">Telefone inválido.</div><br>
+            
+            <button type="submit">Próximo</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function validateCPF(cpf) {
+            cpf = cpf.replace(/[^\d]+/g, '');
+            if (cpf.length !== 11) return false;
+            if (
+                cpf === "00000000000" ||
+                cpf === "11111111111" ||
+                cpf === "22222222222" ||
+                cpf === "33333333333" ||
+                cpf === "44444444444" ||
+                cpf === "55555555555" ||
+                cpf === "66666666666" ||
+                cpf === "77777777777" ||
+                cpf === "88888888888" ||
+                cpf === "99999999999"
+            ) {
+                return false;
+            }
+            let add = 0;
+            for (let i = 0; i < 9; i++) {
+                add += parseInt(cpf.charAt(i)) * (10 - i);
+            }
+            let rev = 11 - (add % 11);
+            if (rev === 10 || rev === 11) rev = 0;
+            if (rev !== parseInt(cpf.charAt(9))) return false;
+            add = 0;
+            for (let i = 0; i < 10; i++) {
+                add += parseInt(cpf.charAt(i)) * (11 - i);
+            }
+            rev = 11 - (add % 11);
+            if (rev === 10 || rev === 11) rev = 0;
+            if (rev !== parseInt(cpf.charAt(10))) return false;
+            return true;
+        }
+
+        function validatePhone(phone) {
+            return phone.length >= 10 && phone.length <= 11;
+        }
+
+        function calculateAge(birthdate) {
+            const today = new Date();
+            const birthDate = new Date(birthdate);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        document.getElementById("cpf").addEventListener("input", function() {
+            var cpf = this.value.replace(/\D/g, '');
+            if (cpf.length > 0) {
+                cpf = cpf.substring(0, 3) + '.' + cpf.substring(3);
+            }
+            if (cpf.length > 7) {
+                cpf = cpf.substring(0, 7) + '.' + cpf.substring(7);
+            }
+            if (cpf.length > 11) {
+                cpf = cpf.substring(0, 11) + '-' + cpf.substring(11, 13);
+            }
+            this.dataset.formattedValue = cpf;
+
+            if (!validateCPF(cpf)) {
+                document.getElementById("cpfWarning").style.display = "block";
+            } else {
+                document.getElementById("cpfWarning").style.display = "none";
+            }
+        });
+
+        document.getElementById("basicDataForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            var name = document.getElementById("name").value;
+            var birthdate = document.getElementById("birthdate").value;
+            var cpf = document.getElementById("cpf").value.replace(/\D/g, '');
+            var email = document.getElementById("email").value;
+            var phone = document.getElementById("phone").value;
+
+            if (!validateCPF(cpf)) {
+                document.getElementById("cpfWarning").style.display = "block";
+                return;
+            }
+            if (!validatePhone(phone)) {
+                document.getElementById("phoneWarning").style.display = "block";
+                return;
+            }
+
+            const age = calculateAge(birthdate);
+            if (age < 18) {
+                document.getElementById("result").innerHTML = "Você deve ter pelo menos 18 anos para se cadastrar.";
+                return;
+            }
+
+            var formData = {
+                name: name,
+                birthdate: birthdate,
+                cpf: cpf,
+                email: email,
+                phone: phone
+            };
+            fetch('http://localhost:5148/api/registration/BasicData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+    if (response.ok) {
+        return response.text();
+    } else {
+        return response.text().then(errorMessage => {
+            throw new Error('Erro na requisição: ' + errorMessage);
+        });
+    }
+            })
+            .then(data => {
+                localStorage.setItem('ClientId', data);
+                window.location.href = 'Address.html';
+            })
+            .catch(error => {
+                console.error('Erro:', error.message);
+                document.getElementById("result").innerHTML = error.message;
+            });
+        });
+    </script>
+</body>
+</html>

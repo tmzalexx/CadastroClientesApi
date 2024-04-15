@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
+<title>Talquee Bank - Cadastro</title>
+</head>
+<body>
+    <h1 class="text-color">Cadastro em Análise</h1>
+    <div class="container">
+        <div class="message text-color">
+            <p>Obrigado pelo seu cadastro! Estamos analisando suas informações. Isso pode levar alguns minutos.</p>
+        </div>
+        <button class="button" onclick="redirectToIndex()">Novo Cadastro</button>
+        
+    </div>
+
+    <script>
+        function redirectToIndex() {
+            localStorage.removeItem('ClientId');
+            location.href = 'Index.html';
+        }
+    </script>
+</body>
+</html>

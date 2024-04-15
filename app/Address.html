@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
+<title>Talquee Bank - Cadastro</title>
+</head>
+<body>
+    <h1 class="text-color">Cadastro</h1>
+    <div class="container">
+        <ul class="steps">
+            <li class="">Dados Básicos</li>
+            <li class="active">Dados de Endereço</li>
+            <li class="">Dados Financeiros</li>
+            <li class="">Senha</li>
+        </ul>
+    <form id="addressForm">
+        <label for="zipcode">CEP:</label>
+        <input type="text" id="zipcode" name="zipcode" required><br>
+
+        <label for="street">Rua:</label>
+        <input type="text" id="street" name="street" required><br>
+
+        <label for="number">Número:</label>
+        <input type="number" id="number" name="number" required><br>
+
+        <label for="district">Bairro:</label>
+        <input type="text" id="district" name="district" required><br>
+
+        <label for="city">Cidade:</label>
+        <input type="text" id="city" name="city" required><br>
+
+        <label for="state">Estado:</label>
+        <input type="text" id="state" name="state" required><br>
+
+        <button type="submit" id="submitAddress">Proximo</button>
+    </form>
+
+    <script>
+        document.getElementById("zipcode").addEventListener("input", function() {
+            var zipcode = this.value;
+
+            if (zipcode.length >= 8) {
+                fetch('http://localhost:5148/api/cep/' + zipcode)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        document.getElementById("street").value = data[0].addressName;
+                        document.getElementById("district").value = data[0].districtName;
+                        document.getElementById("city").value = data[0].cityName;
+                        document.getElementById("state").value = data[0].stateName;
+                    } else {
+                        alert("CEP não encontrado.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao obter informações do CEP:', error);
+                    alert("Ocorreu um erro ao obter informações do CEP. Verifique o console para mais detalhes.");
+                });
+            }
+        });
+
+        document.getElementById("submitAddress").addEventListener("click", function(event) {
+            event.preventDefault();
+
+            var address = {
+                street: document.getElementById("street").value,
+                number: document.getElementById("number").value,
+                district: document.getElementById("district").value,
+                city: document.getElementById("city").value,
+                state: document.getElementById("state").value,
+                ZIPCode: document.getElementById("zipcode").value
+            };
+
+            var clientId = localStorage.getItem('ClientId');
+
+            fetch('http://localhost:5148/api/registration/Address', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ClientId': clientId
+                },
+                body: JSON.stringify(address)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na requisição: ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(() => {
+                window.location.href = 'Finance.html';
+            })
+            .catch(error => {
+                console.error('Erro ao adicionar endereço:', error);
+                alert("Ocorreu um erro ao adicionar o endereço. Verifique o console para mais detalhes.");
+            });
+        });
+    </script>
+</body>
+</html>

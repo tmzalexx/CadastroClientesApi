@@ -1,0 +1,137 @@
+body {
+    background-color: #000000;
+    color: rgb(255, 255, 255);
+    font-family: Courier New, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    text-align: center;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.steps {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    border-radius: 5px;
+    overflow: hidden;
+    background: linear-gradient(to right, #243349 50%, transparent 50%);
+    background-size: 200% 100%;
+    transition: background-position 0.3s ease;
+}
+.steps li {
+    flex-grow: 1;
+    position: relative;
+    color: #e8f1f2;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+.steps li.active {
+    color: #fdf8f8;
+    background-color: #8400ff;
+}
+.steps {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+}
+.step-item {
+    flex-grow: 1;
+    position: relative;
+}
+.step-item:before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-color: rgb(247, 247, 247);
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+    left: calc(50% - 7.5px);
+}
+.step-item.active:before {
+    background-color: white;
+}
+.step-description {
+    text-align: center;
+    margin-top: 10px;
+}
+.warning {
+    color: rgb(0, 0, 0);
+    display: none;
+    margin-bottom: 10px;
+}
+
+.warning-custom {
+    color: #e78e07;
+    display: none;
+    margin-bottom: 10px;
+}
+.text-color {
+    color: #ece6e6
+}
+form {
+    max-width: 600px;
+    width: 100%;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.137);
+    box-shadow: 0 0 20px rgba(194, 0, 243, 0.2);
+}
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+input[type="text"], input[type="email"], input[type="date"], input[type="tel"], input[type="number"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 15px;
+    background-color: #c5d6ee;
+    color: 484848;
+    box-sizing: border-box; 
+}
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #243349;
+    color: white;
+    cursor: pointer;
+}
+button[type="submit"]:hover {
+    background-color: #8400ff;
+}
+
+.button {
+    width: 20%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #243349;
+    box-shadow: 0 0 20px rgba(194, 0, 243, 0.2);
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.button:hover {
+    background-color: #8400ff;
+}
